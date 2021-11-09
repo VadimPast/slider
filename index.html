@@ -1,0 +1,144 @@
+<style>
+    .root {
+        width: 100%;
+    }
+
+    .images {
+        margin-bottom: 20px !important;
+
+    }
+
+    .buttons, .images  {
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    .slide {
+        display: none;
+    }
+
+    .active-slide {
+        /*border: red 2px solid;*/
+        display: initial;
+        width: 250px;
+        height: 180px;
+    }
+</style>
+
+<script>
+
+    window.onload = function () {
+        startSlider('images', 3)
+    }
+
+    function startSlider(rootElementId, amountImages) {  /*передаем ф-ции startSlider параметры rootElementId('images')
+                                                            и amountImages (4) бля единственное что я понял*/
+        let currentSlideNumber = 1 //присваевам переменной currentSlideNumber значение 1 зачем не знаю
+
+
+        const sliderRootElement = document.getElementById(rootElementId) /*присваеваем константе sliderRootElement
+                                                                        'images'*/
+
+        if (sliderRootElement === null) {
+            console.error('Can not find element wth id ' + rootElementId)
+            return
+        }
+
+        for (let imageNumber = 1; imageNumber <= amountImages; imageNumber++) {
+            const imageElement = document.createElement('img') //создаем тег img
+            imageElement.src = `/assets/${imageNumber}.jpeg`  // линк на картинку
+            imageElement.alt = 'image ' + imageNumber
+            imageElement.id = 'slide' + imageNumber
+            imageElement.classList.add('slide') //добавляем єлементу imageElement клас slide
+            //должно выйти <img src="/assets/1.jpeg" alt="image 1" id="slide 1" class="slide">
+
+            sliderRootElement.appendChild(imageElement) //в div c id="images" вставляем imageElement
+            /*должно війти
+            <div class="images" id="images">
+                <img src="/assets/1.jpeg" alt="image 1" id="slide 1" class="slide">
+                <img src="/assets/2.jpeg" alt="image 2" id="slide 2" class="slide">
+                <img src="/assets/3.jpeg" alt="image 3" id="slide 3" class="slide">
+                <img src="/assets/4.jpeg" alt="image 4" id="slide 4" class="slide">
+            </div>
+            */
+        }
+
+        activateSlide(currentSlideNumber) //вызываем ф-цию activateSlide с аргументом currentSlideNumber (тоесть 1)
+
+        const prevButtonElement = document.getElementById('prev')
+        prevButtonElement.onclick = onPrev
+
+        document.getElementById('next').onclick = onNext
+        document.getElementById('reset').onclick = onReset
+
+
+        function onReset() {
+           currentSlideNumber = 1
+
+            activateSlide(currentSlideNumber) /*передаем ф-ции activateSlide значение записаное в переменную
+                                                currentSlideNumber тобишь походу 1*/
+        }
+
+        function onPrev() {
+            if (currentSlideNumber === undefined) {//если currentSlideNumber нет
+                currentSlideNumber = amountImages//присвоить currentSlideNumber значение amountImages походу 4
+            } else if (currentSlideNumber <= 1) {
+                currentSlideNumber = amountImages
+            }
+            activateSlide(currentSlideNumber)
+        }
+
+        function onNext() {
+            if (currentSlideNumber === undefined || currentSlideNumber >= amountImages) {
+                currentSlideNumber = 1
+            } else {
+                currentSlideNumber++
+            }
+
+            activateSlide(currentSlideNumber)
+        }
+    }
+
+    function activateSlide(currentSlideNumber) {/*объявляем функцию activateSlide с аргументом currentSlideNumber (1)*/
+        const slideElements = document.getElementsByClassName('slide') /*объявляем константу slideElements и
+                                                    присваиваем ей значение которое нам достает
+                                                    getElementsByClassName по класу slide,
+                                                    <img src="/assets/1.jpeg" alt="image 1" id="slide 1" class="slide">
+                                                    */
+      for (const slideElement of slideElements) {/*перебираем значения  переменной slideElements
+                                                     и присваивает переменой slideElement */
+            slideElement.classList.remove('active-slide')  /*удаляем из slideElement клас 'active-slide'*/
+        }
+
+
+        if (currentSlideNumber === undefined) { /*если currentSlideNumber нет - выйти из функции activateSlide*/
+            return
+        }
+
+        const imageId = 'slide' + currentSlideNumber /* записываеи в переменную imageId сроку 'slide'
+                                                       и прибавлем currentSlideNumber Должно типа выйти
+                                                       slide1 slide2...*/
+        const currentSlideElement = document.getElementById(imageId) /*записываеи в константу currentSlideElement
+                                                                        значение imageId которое нам достала
+                                                                        ф-ция getElementById*/
+
+        if (currentSlideElement === null) { /*если currentSlideElement нет - выйти из функции activateSlide*/
+            return
+        }
+        currentSlideElement.classList.add('active-slide') /*в переменную currentSlideElement добавляем 'active-slide'*/
+    }
+
+
+
+</script>
+
+<div class="root">
+    <div class="images" id="images"></div>
+
+    <div class="buttons">
+        <button type="button" id="prev">Prev</button>
+        <button type="button" id="next">Next</button>
+        <button type="button" id="reset">Reset</button>
+    </div>
+
+</div>
